@@ -14,7 +14,8 @@ const App: React.FC = () => {
     const observer = useRef<IntersectionObserver | null>(null);
 
     const getAccessToken = async (): Promise<string> => {
-        const response = await axios.post('https://accounts.spotify.com/api/token',
+        const response = await axios.post(
+            'https://accounts.spotify.com/api/token',
             'grant_type=client_credentials',
             {
                 headers: {
@@ -47,25 +48,29 @@ const App: React.FC = () => {
         if (!query) return;
 
         const newResults = await searchTracks(query, page);
-        setResults(prevResults => [...prevResults, ...newResults]);
-        setPage(prevPage => prevPage + 1);
+        setResults((prevResults) => [...prevResults, ...newResults]);
+        setPage((prevPage) => prevPage + 1);
 
         if (newResults.length < 20) {
             setHasMore(false);
         }
     }, [query, page]);
 
-    const lastTrackElementRef = useCallback((node: HTMLDivElement | null) => {
-        if (observer.current) observer.current.disconnect();
-        observer.current = new IntersectionObserver(entries => {
-            if (entries[0].isIntersecting && hasMore) {
-                loadMoreResults();
-            }
-        });
-        if (node) observer.current.observe(node);
-    }, [loadMoreResults, hasMore]);
+    const lastTrackElementRef = useCallback(
+        (node: HTMLDivElement | null) => {
+            if (observer.current) observer.current.disconnect();
+            observer.current = new IntersectionObserver((entries) => {
+                if (entries[0].isIntersecting && hasMore) {
+                    loadMoreResults();
+                }
+            });
+            if (node) observer.current.observe(node);
+        },
+        [loadMoreResults, hasMore]
+    );
 
-    const handleSearch = async () => {
+    const handleSearch = async (e: React.FormEvent) => {
+        e.preventDefault(); // 폼 제출 시 페이지 리로드 방지
         setPage(1);
         setResults([]);
         setHasMore(true);
@@ -80,19 +85,21 @@ const App: React.FC = () => {
                     <h1 className="logo">Musitify</h1>
                     <nav className="nav">
                         <a href="#trend">Trend Chart</a>
-                        <a href="#join">Join</a>
+                        <a href="/Join">Join</a>
                     </nav>
                 </div>
             </header>
             <div className="search-container">
-                <input
-                    type="text"
-                    className="search-input"
-                    value={query}
-                    onChange={(e) => setQuery(e.target.value)}
-                    placeholder="Search for songs..."
-                />
-                <button onClick={handleSearch}>Search</button>
+                <form onSubmit={handleSearch}>
+                    <input
+                        type="text"
+                        className="search-input"
+                        value={query}
+                        onChange={(e) => setQuery(e.target.value)}
+                        placeholder="Search for songs..."
+                    />
+                    <button type="submit">Search</button>
+                </form>
             </div>
             <div className="results-grid">
                 {results.map((track, index) => {
@@ -114,6 +121,6 @@ const App: React.FC = () => {
             </div>
         </div>
     );
-}
+};
 
 export default App;
