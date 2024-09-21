@@ -1,7 +1,8 @@
 import axios from 'axios';
 
-const CLIENT_ID = '92b2c30da2b042019289806adcbb5bfc';
-const CLIENT_SECRET = '08d34d62b77542ce84bc724c85dd81de';
+//const CLIENT_ID = '92b2c30da2b042019289806adcbb5bfc';
+//const CLIENT_SECRET = '08d34d62b77542ce84bc724c85dd81de';
+
 const BASE_URL = 'https://api.spotify.com/v1';
 
 // 스포티파이 API 액세스 토큰을 가져오는 함수
